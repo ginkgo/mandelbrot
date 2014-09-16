@@ -9,6 +9,7 @@ out vec4 frag_color;
 uniform dmat3 view;
 uniform int max_iterations;
 uniform sampler1D tex;
+uniform dvec2 c;
 
 dvec2 csquare(dvec2 z)
 {
@@ -19,14 +20,17 @@ dvec2 csquare(dvec2 z)
 
 void main (void)
 {
+    // frag_color = vec4(0,0,1,0);
+    // return;
+    
     dvec2 val = (view * dvec3(coord.x,coord.y,1)).xy;
     
     int it = 0;
-    dvec2 z = vec2(0,0);
+    dvec2 z = val;
     
     while (it < max_iterations && dot(z,z) < 4.0) {
         it++;
-        z = csquare(z) + val;
+        z = csquare(z) + c;
     }
     
     frag_color = vec4(texture(tex,it/23.0).r, texture(tex,it/29.0).r, texture(tex,it/31.0).r, 1);

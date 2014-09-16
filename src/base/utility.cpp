@@ -334,6 +334,14 @@ void Keyboard::update()
 
 
 
+bool Keyboard::any_pressed() const
+{
+    for (int i = 0; i <= GLFW_KEY_LAST; ++i) {
+        if (last_state[i]) return true;
+    }
+    
+    return false;
+}
 
 bool Keyboard::pressed(int key) const
 {

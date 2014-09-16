@@ -181,6 +181,7 @@ public:
     
     void update();
 
+    bool any_pressed() const;
     bool pressed(int key) const;
     bool released(int key) const;
     bool is_down(int key) const;

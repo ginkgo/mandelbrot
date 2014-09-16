@@ -31,6 +31,7 @@
 #include "GL/Shader.h"
 
 #include "Mandelbrot.h"
+#include "Julia.h"
 
 void mainloop(GLFWwindow* window);
 bool handle_arguments(int& argc, char** argv);
@@ -53,7 +54,7 @@ int main(int argc, char** argv)
         return 1;
     }
     
-    glfwSetWindowTitle(window, config.window_title().c_str());
+    glfwSetWindowTitle(window, "Mandelbrot");
     glfwSetFramebufferSizeCallback(window, resize_window_callback);
     mainloop(window);
     
@@ -80,10 +81,26 @@ void mainloop(GLFWwindow* window)
     
     dvec2 focus = initial_focus;
     double mag = initial_mag;
+
     
+    const int julia_window_size = 500;
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    GLFWwindow* julia_window = glfwCreateWindow(julia_window_size, julia_window_size, "Julia", NULL, NULL);
+
+    glfwMakeContextCurrent(julia_window);
+    Julia julia(julia_window_size);
+
+    glfwMakeContextCurrent(window);
+    
+    glfwPollEvents();
     while (running) {
 
-        glfwPollEvents();
+        if (keys.any_pressed()) {
+            glfwPollEvents();
+        } else {
+            glfwWaitEvents();
+            last = glfwGetTime();
+        }
         
         double now = glfwGetTime();
         double time_diff = now - last;
@@ -120,7 +137,8 @@ void mainloop(GLFWwindow* window)
         }
         
         // ---------------------------------------------------------------------
-        // Draw frame
+        // Draw mandelbrot
+        glfwMakeContextCurrent(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         mandelbrot.draw(focus, mag);
@@ -128,17 +146,31 @@ void mainloop(GLFWwindow* window)
         glfwSwapBuffers(window);
 
         // ---------------------------------------------------------------------
+        // Draw Julia
+        glfwMakeContextCurrent(julia_window);
+        glViewport(0,0, julia_window_size, julia_window_size);
+        glClearColor(0,1,0,1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        dvec2 screen_center(config.window_size().x/2.0, config.window_size().y/2.0);
+        dvec2 c = (cursor_pos-screen_center)*mag*dvec2(2,-2)+focus;
+        julia.draw(c);
+        
+        glfwSwapBuffers(julia_window);
+        
+        // ---------------------------------------------------------------------
+        glfwMakeContextCurrent(window);
         
         // Check if the window has been closed
         running = running && keys.is_up(GLFW_KEY_ESCAPE);
         running = running && keys.is_up('Q');
 		running = running && !glfwWindowShouldClose( window );
+		running = running && !glfwWindowShouldClose( julia_window );
 
         frame_no++;
 
         keys.update();
-        statistics.update();
+        //statistics.update();
         last_cursor_pos = cursor_pos;
     }
 }

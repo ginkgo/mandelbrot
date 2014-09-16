@@ -1,7 +1,8 @@
-#include "Mandelbrot.h"
+#include "Julia.h"
 
-Mandelbrot::Mandelbrot()
-    : shader("mandelbrot")
+Julia::Julia(int size)
+    : size(size)
+    , shader("julia")
     , quad(4)
 {
     quad.vertex(-1,-1);
@@ -11,7 +12,7 @@ Mandelbrot::Mandelbrot()
     quad.send_data(false);
 
     shader.bind();
-    shader.set_uniform("max_iterations", (GLint)1024);
+    shader.set_uniform("max_iterations", (GLint)100);
     shader.unbind();
 
 
@@ -22,19 +23,26 @@ Mandelbrot::Mandelbrot()
         texdata[i] = float(sin(x) * 0.5 + 0.5);
     }
 
-    texture = new GL::Texture(1,W,0,0,GL_RED,GL_R32F,GL_LINEAR,GL_LINEAR_MIPMAP_LINEAR,GL_REPEAT,0,texdata);
+    texture = new GL::Texture(1,W,0,0,
+                              GL_RED,GL_R32F,
+                              GL_LINEAR,GL_LINEAR_MIPMAP_LINEAR,
+                              GL_REPEAT,0,
+                              texdata);
 }
 
 
-Mandelbrot::~Mandelbrot()
+Julia::~Julia()
 {
     delete texture;
 }
 
 
-void Mandelbrot::draw(const dvec2& focus, double mag)
+void Julia::draw(const dvec2& c)
 {
-    dvec2 size_h = dvec2(config.window_size().x, config.window_size().y) * mag;
+    const dvec2 focus(0,0);
+    const double mag = 2.0/size;
+    
+    dvec2 size_h = dvec2(size, size) * mag;
 
     dmat3 view(size_h.x,0,0,
                0,size_h.y,0,
@@ -45,6 +53,7 @@ void Mandelbrot::draw(const dvec2& focus, double mag)
 
     shader.set_uniform("view", view);
     shader.set_uniform("tex", (const GL::Tex*)texture);
+    shader.set_uniform("c", c);
     
     quad.draw(GL_TRIANGLE_STRIP, shader);
         

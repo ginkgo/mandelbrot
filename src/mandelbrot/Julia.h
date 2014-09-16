@@ -9,17 +9,18 @@
 #include "GL/VBO.h"
 
 
-class Mandelbrot
+class Julia
 {
-    
+
+    int size;
     GL::Shader shader;
     GL::VBO quad;
     GL::Texture* texture;
     
     public:
 
-    Mandelbrot();
-    ~Mandelbrot();
+    Julia(int size);
+    ~Julia();
     
-    void draw(const dvec2& focus, double mag);
+    void draw(const dvec2& c);
 };

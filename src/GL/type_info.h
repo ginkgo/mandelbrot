@@ -116,6 +116,20 @@ template <> struct gltype_info<GLfloat>
     }
 };
 
+template <> struct gltype_info<dvec2>
+{
+    static const GLenum type = GL_DOUBLE;
+    static const GLenum format = GL_RG;
+
+    static const GLint components = 2;
+
+    static void set_uniform(GLint location, const dvec2& value)
+    {
+        glUniform2dv(location, 1, (GLdouble*)&value);
+    }
+
+};
+
 template <> struct gltype_info<vec2>
 {
     static const GLenum type = GL_FLOAT;
