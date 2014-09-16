@@ -28,7 +28,7 @@ def setup_env(toolchain, optimization_flags, defines, config):
         print('The toolchain \'%s\' is not supported.' % toolchain)
         Exit(1)
     
-    env['LIBS'] = ['GL', 'glfw', 'boost_regex', 'IL', 'OpenCL', 'Xrandr', 'rt', 'capnp', 'kj']
+    env['LIBS'] = ['GL', 'glfw', 'boost_regex', 'IL', 'Xrandr']
     env['CCFLAGS'] = optimization_flags + warning_flags 
     env['CXXFLAGS'] = ['-std=c++11']
     env['CFLAGS'] = ['-std=c99']

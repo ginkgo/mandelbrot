@@ -1,3 +1,9 @@
+// Window size in pixels.
+window_size = 0 0
+
+// Window title.
+window_title = Fraktale UE
+
 // Enables dump mode.
 // The renderer will dump a trace, statistics and the currenct config after a certain number of frames and exit.
 dump_mode = false
@@ -18,4 +24,4 @@ statistics_file = statistics.dump
 
 
 
-#hash:-2330579002830247423
+#hash:855289940
