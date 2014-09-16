@@ -310,6 +310,19 @@ template <> struct gltype_info<mat2>
     }
 };
 
+template <> struct gltype_info<dmat3>
+{
+    static const GLenum type = GL_DOUBLE;
+
+    static const GLint components = 9;
+
+    static void set_uniform(GLint location, const dmat3& value)
+    {
+		glUniformMatrix3dv(location, 1, false, (GLdouble*)&value);
+    }
+
+};
+
 template <> struct gltype_info<mat3>
 {
     static const GLenum type = GL_FLOAT;

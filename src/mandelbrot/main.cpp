@@ -25,10 +25,18 @@
 #include <Config.h>
 #include <GLConfig.h>
 
+#include "Statistics.h"
+
+#include "GL/VBO.h"
+#include "GL/Shader.h"
+
+#include "Mandelbrot.h"
+
 void mainloop(GLFWwindow* window);
 bool handle_arguments(int& argc, char** argv);
 GLFWwindow* init_opengl(ivec2 window_size);
 void get_framebuffer_info();
+void resize_window_callback(GLFWwindow* window, int width, int height);
 
 int main(int argc, char** argv)
 {
@@ -46,7 +54,7 @@ int main(int argc, char** argv)
     }
     
     glfwSetWindowTitle(window, config.window_title().c_str());
-
+    glfwSetFramebufferSizeCallback(window, resize_window_callback);
     mainloop(window);
     
     return 0;
@@ -65,6 +73,14 @@ void mainloop(GLFWwindow* window)
 
     long long frame_no = 0;
 
+    Mandelbrot mandelbrot;
+
+    const dvec2 initial_focus(-0.5,0.0);
+    const double initial_mag = 2.0/std::min(config.window_size().x,config.window_size().y);
+    
+    dvec2 focus = initial_focus;
+    double mag = initial_mag;
+    
     while (running) {
 
         glfwPollEvents();
@@ -77,10 +93,27 @@ void mainloop(GLFWwindow* window)
         glfwGetCursorPos(window, &(cursor_pos.x), &(cursor_pos.y));
 
         glm::dvec2  mouse_movement = cursor_pos - last_cursor_pos;
-        if (abs(mouse_movement.x) > 100 || abs(mouse_movement.y) > 100) {
+        if (glm::length(mouse_movement) > 100) {
             mouse_movement = vec2(0,0);
         }
 
+        if (glm::length(mouse_movement) > 0.0 && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT)) {
+            focus -= mouse_movement * mag * dvec2(2,-2);
+        }
+
+        if (keys.is_down(GLFW_KEY_UP)) {
+            mag *= exp(-time_diff);
+        }
+
+        if (keys.is_down(GLFW_KEY_DOWN)) {
+            mag *= exp(time_diff);
+        }
+
+        if (keys.pressed('R')) {
+            focus = initial_focus;
+            mag = initial_mag;
+        }
+        
         // Make screenshot
         if (keys.pressed(GLFW_KEY_PRINT_SCREEN)) {
             make_screenshot();
@@ -89,6 +122,8 @@ void mainloop(GLFWwindow* window)
         // ---------------------------------------------------------------------
         // Draw frame
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        mandelbrot.draw(focus, mag);
         
         glfwSwapBuffers(window);
 
@@ -103,9 +138,10 @@ void mainloop(GLFWwindow* window)
         frame_no++;
 
         keys.update();
+        statistics.update();
+        last_cursor_pos = cursor_pos;
     }
 }
-
 
 
 
@@ -269,4 +305,12 @@ void get_framebuffer_info()
     cout << " Framebuffer info... done                                                       " << endl;
     cout << "--------------------------------------------------------------------------------" << endl;
     cout << endl << endl;
+}
+
+
+void resize_window_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0,0,width, height);
+
+    config.set_window_size(ivec2(width,height));
 }
