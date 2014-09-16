@@ -1,5 +1,5 @@
 // Window size in pixels.
-window_size = 0 0
+window_size = 800 600
 
 // Window title.
 window_title = Fraktale UE
@@ -24,4 +24,4 @@ statistics_file = statistics.dump
 
 
 
-#hash:855289940
+#hash:2896597132473777102

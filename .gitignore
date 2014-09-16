@@ -1,7 +1,7 @@
 
 traces/*.pdf
 *.o
-micropolis_*
+mandelbrot_*
 generated/*
 .sconsign.dblite
 reyes.trace

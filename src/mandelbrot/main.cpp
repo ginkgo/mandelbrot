@@ -115,8 +115,8 @@ bool handle_arguments(int& argc, char** argv)
 
     // Config
     
-    if (!Config::load_file("micropolis.options", config, needs_resave)) {
-        cout << "Failed to load micropolis.options" << endl;
+    if (!Config::load_file("mandelbrot.options", config, needs_resave)) {
+        cout << "Failed to load mandelbrot.options" << endl;
         return false;
     }
 
@@ -126,8 +126,8 @@ bool handle_arguments(int& argc, char** argv)
         }
 
 
-        if (!Config::save_file("micropolis.options", config)) {
-            cout << "Failed to save micropolis.options" << endl;
+        if (!Config::save_file("mandelbrot.options", config)) {
+            cout << "Failed to save mandelbrot.options" << endl;
             return false;
         }
     }
@@ -146,7 +146,7 @@ bool handle_arguments(int& argc, char** argv)
 
 
         if (!GLConfig::save_file("gl.options", gl_config)) {
-            cout << "Failed to save micropolis.options" << endl;
+            cout << "Failed to save mandelbrot.options" << endl;
             return false;
         }
     }
@@ -171,10 +171,10 @@ GLFWwindow* init_opengl(ivec2 size)
 
     int version = FLEXT_MAJOR_VERSION * 10 + FLEXT_MINOR_VERSION;
 
-    // glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-    // glfwWindowHint(GLFW_SAMPLES, gl_config.fsaa_samples());
-    // glfwWindowHint(GLFW_SRGB_CAPABLE, GL_FALSE);
-    // glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+    glfwWindowHint(GLFW_SAMPLES, gl_config.fsaa_samples());
+    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     // Create window and OpenGL context
     GLFWwindow* window = glfwCreateWindow(size.x, size.y, "Window title", NULL, NULL);
